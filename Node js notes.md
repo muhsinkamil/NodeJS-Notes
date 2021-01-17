@@ -146,4 +146,21 @@ console.log(process.argv)  --&gt; [[
 </code></pre>
 <h2 id="parsing-command-line-arguments">Parsing command line arguments:</h2>
 <p>NPM module used: yargs</p>
+<pre><code>yargs.command({
+    command:  "add",
+    describe:  "adding note",
+    builder:  {
+	    title:  {
+			describe:  "Note title",
+			demandOption:  true,
+			type:  "string",
+		},
+    }
+
+    handler:  function  ()  {
+	    console.log("adding new note")
+    }
+})
+yargs.parse()
+</code></pre>
 
