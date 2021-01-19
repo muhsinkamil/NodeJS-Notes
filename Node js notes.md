@@ -163,4 +163,35 @@ console.log(process.argv)  --&gt; [[
 })
 yargs.parse()
 </code></pre>
+<p><strong>Exploring JSON</strong>:</p>
+<pre><code>const  series  =  {
+	title:  "The office",
+	starred:  "Steve Carell",
+}
+
+const  seriesJSON  =  JSON.stringify(series)
+const  seriesObject = JSON.parse(seriesJSON)
+
+console.log("JSON: ",  seriesJSON) // {"title":"The office","starred":"Steve Carell"}
+console.log("Object: ",  seriesObject) // { title: 'The office', starred: 'Steve Carell' }
+
+console.log("JSON title: ",  seriesJSON.title) // JSON title: undefined
+console.log("Object title: ",  seriesObject.title) // Object title: The office
+</code></pre>
+<p><strong>Writing to file and getting buffer</strong>:</p>
+<pre><code>fs.writeFileSync("series.json",  seriesJSON)
+
+const  dataBuffer  =  fs.readFileSync("series.json")
+
+console.log("Still in json format ",  dataBuffer.toString()) //{"title":"The office","starred":"Steve Carell"}
+</code></pre>
+<h2 id="debugging-with-chrome">Debugging with chrome:</h2>
+<ul>
+<li>Add “debugger” statement where necessary.</li>
+<li>Run with “node inspect app”</li>
+<li>Open “chrome://inspect” to inspect</li>
+<li>Select the app and inspect</li>
+<li>To restart the debug session, on terminal, “restart”</li>
+<li>To exit from the debug session, “ctrl + c” twice</li>
+</ul>
 
