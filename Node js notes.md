@@ -64,42 +64,7 @@ Node js helps us use these functionalities without js code.</p>
 <td>Available : Gives the various process</td>
 </tr>
 </tbody>
-</table><h2 id="asynchronous-programming">Asynchronous programming:</h2>
-<p><strong>Without Async:</strong></p>
-<ul>
-<li>Server sends a request to file system</li>
-<li>The server waits till the file opens and data is being read</li>
-<li>It returns the data to client</li>
-<li>The server is now ready to take the next request</li>
-</ul>
-<p><strong>With Async</strong>:</p>
-<ul>
-<li>Server sends a request to file system</li>
-<li>Now the server is ready to handle the next request</li>
-<li>Meanwhile when the file is opened and data is read from file, server sends the content to client</li>
-</ul>
-<h2 id="architecture">Architecture:</h2>
-<p><strong>Multi Threading request response architecture</strong>: uses HTTP protocol, also called “Stateless model”</p>
-<ul>
-<li>There are limited number of threads waiting.</li>
-<li>Request sent by the client.</li>
-<li>Single thread gets assigned from thread pool.</li>
-<li>The assigned thread is responsible to read the request, process and perform blocking I/O</li>
-</ul>
-<p><strong>Cons of Multithreading:</strong></p>
-<ul>
-<li>If the requests are more than the number of threads, the requests have to wait.</li>
-<li>Difficult to manage concurrent requests</li>
-<li>wastage of time in processing I/O operations.</li>
-</ul>
-<p><strong>Node uses Single thread event loop model</strong>:</p>
-<ul>
-<li>Multiple requests are placed in “Event queue”. Node internally maintains the limited thread pool and infinite loop known as “Event loop”</li>
-<li>Event loop receives and process the requests using single thread. Event loop executes always and checks if the event queue has any requests.</li>
-<li>Event loop picks the request if any. If the request has no blocking I/O operations, it responds immediately.</li>
-<li>If it is blocking I/O, thread is assigned, which is responsible for request’s processing and response.</li>
-</ul>
-<h1 id="module-system">Module system</h1>
+</table><h1 id="module-system">Module system</h1>
 <p>One of the most popular, most used module is “File system”</p>
 <p><a href="https://nodejs.org/api/fs.html">File system Node Documentation: </a></p>
 <h2 id="importing-the-file-system">Importing the file system:</h2>
@@ -193,5 +158,74 @@ console.log("Still in json format ",  dataBuffer.toString()) //{"title":"The off
 <li>Select the app and inspect</li>
 <li>To restart the debug session, on terminal, “restart”</li>
 <li>To exit from the debug session, “ctrl + c” twice</li>
+</ul>
+<h2 id="asynchronous-programming">Asynchronous programming:</h2>
+<p><strong>Without Async:</strong></p>
+<ul>
+<li>Server sends a request to file system</li>
+<li>The server waits till the file opens and data is being read</li>
+<li>It returns the data to client</li>
+<li>The server is now ready to take the next request</li>
+</ul>
+<p><strong>With Async</strong>:</p>
+<ul>
+<li>Server sends a request to file system</li>
+<li>Now the server is ready to handle the next request</li>
+<li>Meanwhile when the file is opened and data is read from file, server sends the content to client</li>
+</ul>
+<h2 id="architecture">Architecture:</h2>
+<p><strong>Multi Threading request response architecture</strong>: uses HTTP protocol, also called “Stateless model”</p>
+<ul>
+<li>There are limited number of threads waiting.</li>
+<li>Request sent by the client.</li>
+<li>Single thread gets assigned from thread pool.</li>
+<li>The assigned thread is responsible to read the request, process and perform blocking I/O</li>
+</ul>
+<p><strong>Cons of Multithreading:</strong></p>
+<ul>
+<li>If the requests are more than the number of threads, the requests have to wait.</li>
+<li>Difficult to manage concurrent requests</li>
+<li>wastage of time in processing I/O operations.</li>
+</ul>
+<p><strong>Node uses Single thread event loop model</strong>:</p>
+<ul>
+<li>Multiple requests are placed in “Event queue”. Node internally maintains the limited thread pool and infinite loop known as “Event loop”</li>
+<li>Event loop receives and process the requests using single thread. Event loop executes always and checks if the event queue has any requests.</li>
+<li>Event loop picks the request if any. If the request has no blocking I/O operations, it responds immediately.</li>
+<li>If it is blocking I/O, thread is assigned, which is responsible for request’s processing and response.</li>
+</ul>
+<h2 id="express">Express</h2>
+<pre><code>const  express  =  require("express")
+const  app  =  express()
+
+// For root page
+app.get("/", (req, res) =&gt; {
+res.send("Need to render index.html")
+})
+
+//Help page
+app.get("/help", (req, res) =&gt; {
+res.send("Help page")
+})
+
+//We can return HTML as response
+app.get("/about" ,(req, res) =&gt; {
+res.send("&lt;h1&gt;This is about page&lt;/h1&gt;")
+})
+
+app.listen(3090, () =&gt; {
+console.log("server listening at port 3090")
+})
+</code></pre>
+<h2 id="path-in-node-core-module">Path in node core module:</h2>
+<pre><code>const path = require('path')
+const  publicFolder  =  path.join(__dirname, '../public')
+
+// goes to the public folder and serves the files
+app.use(express.static(publicFolder))
+</code></pre>
+<ul>
+<li>Configure public folder and link with app with app.use(express.static(PUBLIC_FOLDER_NAME))</li>
+<li>Public folder is used to render the static files.</li>
 </ul>
 
