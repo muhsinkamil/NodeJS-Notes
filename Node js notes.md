@@ -228,4 +228,62 @@ app.use(express.static(publicFolder))
 <li>Configure public folder and link with app with app.use(express.static(PUBLIC_FOLDER_NAME))</li>
 <li>Public folder is used to render the static files.</li>
 </ul>
+<h2 id="handlebars-for-dynamic-templating">Handlebars for Dynamic templating:</h2>
+<ul>
+<li>Create Views folder</li>
+<li>`// set handlebar using</li>
+<li>app.set(‘view engine’, ‘hbs’)  // in app.js</li>
+</ul>
+<p>Create routes for hbs:<br>
+Node automatically checks for views folder:</p>
+<pre><code> app.get('', (req, res) =&gt; {
+		res.render('index', {
+			title:  "Weather App",
+			name:  "Mohamed Muhsin"
+			})
+	})
+</code></pre>
+<h2 id="setting-partials-with-hbs">Setting partials with hbs:</h2>
+<p>Register the partials in app.js</p>
+<pre><code>const  partialFolder  =  path.join(__dirname, "../templates/partials")
+hbs.registerPartial(partialFolder)
+</code></pre>
+<p>Customise Nodemon: Tell nodemon to notice for extensions of js and hbs</p>
+<pre><code>"start":  "nodemon src/app.js -e js, hbs"
+</code></pre>
+<h2 id="query-strings">Query Strings:</h2>
+<ul>
+<li>
+<p>Obtained from request ( request.query )</p>
+</li>
+<li>
+<p>name=“location” in html acts as key and value will be searchInput.value</p>
+</li>
+<li>
+<p>add action to form:</p>
+<pre><code>  &lt;form&gt;
+  
+  &lt;input  type="text"  placeholder="Location"  name="location"  class="search-input"&gt;
+  &lt;button  class="submit-btn"&gt;
+  		Submit
+  &lt;/button&gt;
+
+  	&lt;/form&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="mongo-db">Mongo DB:</h2>
+<p><strong>Start Mongo</strong>:</p>
+<p>“C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe” --dbpath=“c:\data\taskdb”</p>
+<p><strong>Mongo GUI:</strong></p>
+<ul>
+<li>Install Robo Mongo 3T</li>
+<li>Connect the Local Mongo which is running at port 27017 to Robo 3T and test by running command <strong>db.version()</strong>.</li>
+<li>To run the command, ctrl + Enter or F5</li>
+</ul>
+<p><strong>Mongo Db Npm module</strong>:</p>
+<ul>
+<li>Objective: CRUD</li>
+<li>MongoClient</li>
+</ul>
 
