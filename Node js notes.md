@@ -286,4 +286,36 @@ hbs.registerPartial(partialFolder)
 <li>Objective: CRUD</li>
 <li>MongoClient</li>
 </ul>
+<h2 id="connecting-to-database">Connecting to database:</h2>
+<pre><code>const mongodb =  require("mongodb")
+
+const  MongoClient  = mongodb.MongoClient
+const  connectionURL  =  "mongodb://127.0.0.1:27017"
+MongoClient.connect(
+	connectionURL,
+	{ useUnifiedTopology:  true },
+	(error, client) =&gt; {
+	if (error) {
+		return  console.log("Error connecting to db")
+	}
+		const  db  =  client.db(databaseName)
+		db.collection("users").insertMany([{
+			name: "ashiq"
+		}])
+		console.log("Connected to server")
+	}
+)
+</code></pre>
+<p>**Most used in InsertOne callback: ** are</p>
+<ul>
+<li>insertedCount,</li>
+<li>ops,</li>
+<li>insertedId</li>
+<li><a href="http://mongodb.github.io/node-mongodb-native/3.6/api/Collection.html#~insertOneWriteOpResult">http://mongodb.github.io/node-mongodb-native/3.6/api/Collection.html#~insertOneWriteOpResult</a></li>
+</ul>
+<p><strong>Object ID:</strong><br>
+Create Object ID,</p>
+<ul>
+<li>require ObjectID from  ‘mongodb’</li>
+</ul>
 
