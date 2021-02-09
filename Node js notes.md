@@ -95,6 +95,7 @@ fs.writeFileSync('notes.txt',  greeting("Kamil"))
 <p>Importing npm package is same as importing the core node modules( like ‘fs’)</p>
 <pre><code>const validator = require('validator')
 </code></pre>
+<p><strong>Installing as dev dependency: npm install nodemon --save-dev</strong></p>
 <h2 id="streams--buffer">Streams &amp; Buffer</h2>
 <p>Start using data before it has finished loading.<br>
 Small buffer of data can be used during every interval of load.<br>
@@ -317,5 +318,64 @@ MongoClient.connect(
 Create Object ID,</p>
 <ul>
 <li>require ObjectID from  ‘mongodb’</li>
+</ul>
+<p><strong>Update with set operator</strong>:</p>
+<pre><code>db.collection("tasks")
+	.updateOne(
+	{ _id:  new  ObjectID("60210e27bd70a430a45db269")},
+	{
+	$set: {
+		description:  "Buy sugar",
+		},
+	}
+	)
+	.then((res) =&gt;  console.log(res))
+	.catch((error) =&gt;  console.log(error))
+</code></pre>
+<p>**Structuring a REST API: **</p>
+<p>REST - Representational state transfer - Application programming interface</p>
+<p><strong>Create</strong> :</p>
+<ul>
+<li>POST /products</li>
+</ul>
+<p><strong>Read</strong>:</p>
+<ul>
+<li>GET /products</li>
+<li>GET /products/:id</li>
+</ul>
+<p><strong>Update:</strong><br>
+-PATCH /products/:id</p>
+<p><strong>Delete:</strong><br>
+-DELETE /products/:id</p>
+<p><strong>Status code:</strong> <a href="httpstatuses.com">httpstatuses.com</a></p>
+<ul>
+<li>200 -&gt; Success</li>
+<li>400 -&gt; Error</li>
+<li>500 -&gt; server error</li>
+</ul>
+<p><strong>Structure of Request:</strong><br>
+Eg.,<br>
+POST  /products HTTP/1.1<br>
+Accept: application/json<br>
+Connection: Keep-alive<br>
+Authorisation: Bearer dfjalkjdfal;kjdfa;lkjd;lakj1039i409…</p>
+<p>{ “description” : “Order shirt” }</p>
+<p><strong>Structure of Response:</strong><br>
+Eg.,<br>
+HTTP/1.1 201 Created<br>
+Date: Sun, 02/09/2020 19:59:12<br>
+Server: Express<br>
+Content-type: application/json</p>
+<p>{ “_id”: “djsa;lkjsadshdsflkajshlsa”, “description” : “Order shirt” }</p>
+<p><strong>Creating EndPoints in REST</strong>:</p>
+<pre><code>app.use(express.json()) // parse incoming json to object
+
+app.post("/products", (req, res) =&gt; {
+    res.send("Posted")
+})
+</code></pre>
+<ul>
+<li>Extract model to separate js file</li>
+<li>keep mongoose.js file only as means to connect to db</li>
 </ul>
 
