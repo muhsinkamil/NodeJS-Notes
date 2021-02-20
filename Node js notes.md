@@ -332,7 +332,7 @@ Create Object ID,</p>
 	.then((res) =&gt;  console.log(res))
 	.catch((error) =&gt;  console.log(error))
 </code></pre>
-<p>**Structuring a REST API: **</p>
+<p><strong>Structuring a REST API:</strong></p>
 <p>REST - Representational state transfer - Application programming interface</p>
 <p><strong>Create</strong> :</p>
 <ul>
@@ -354,18 +354,20 @@ Create Object ID,</p>
 <li>500 -&gt; server error</li>
 </ul>
 <p><strong>Structure of Request:</strong><br>
-Eg.,<br>
-POST  /products HTTP/1.1<br>
-Accept: application/json<br>
-Connection: Keep-alive<br>
-Authorisation: Bearer dfjalkjdfal;kjdfa;lkjd;lakj1039i409…</p>
+Eg.,</p>
+<pre><code>POST  /products HTTP/1.1
+Accept: application/json
+Connection: Keep-alive
+Authorisation: Bearer dfjalkjdfal;kjdfa;lkjd;lakj1039i409..
+</code></pre>
 <p>{ “description” : “Order shirt” }</p>
 <p><strong>Structure of Response:</strong><br>
-Eg.,<br>
-HTTP/1.1 201 Created<br>
-Date: Sun, 02/09/2020 19:59:12<br>
-Server: Express<br>
-Content-type: application/json</p>
+Eg.,</p>
+<pre><code>    HTTP/1.1 201 Created
+	Date: Sun, 02/09/2020 19:59:12
+	Server: Express
+	Content-type: application/json
+</code></pre>
 <p>{ “_id”: “djsa;lkjsadshdsflkajshlsa”, “description” : “Order shirt” }</p>
 <p><strong>Creating EndPoints in REST</strong>:</p>
 <pre><code>app.use(express.json()) // parse incoming json to object
@@ -377,5 +379,231 @@ app.post("/products", (req, res) =&gt; {
 <ul>
 <li>Extract model to separate js file</li>
 <li>keep mongoose.js file only as means to connect to db</li>
+</ul>
+<p><strong>Read EndPoint:</strong></p>
+<pre><code>app.get('/products', (req, res) =&gt; {
+	 User.find({})
+		 .then(users =&gt; res.send(users))
+		 .catch(error =&gt; res.status(500).send())
+})
+</code></pre>
+<p><strong>Read Individual Product: Read based on dynamic value</strong></p>
+<pre><code> app.get('/users/:id', (req, res) =&gt; {
+        const _id = req.params.id
+        User.findById(_id)
+	        .then(user =&gt; res.send(user))
+	        .catch(error =&gt; res.status(500).send("No match found"))
+    })
+</code></pre>
+<p><strong>Data Validation and sanitization:</strong></p>
+<ul>
+<li>use validate(value) { condition here }</li>
+<li><a href="https://mongoosejs.com/docs/schematypes.html">https://mongoosejs.com/docs/schematypes.html</a></li>
+<li>use <strong>validator npm module</strong></li>
+</ul>
+<h2 id="authentication">Authentication:</h2>
+<ol>
+<li>
+<p>Hash the password</p>
+</li>
+<li>
+<p>Use <strong>bcryptjs npm module</strong> to securely store password</p>
+<pre><code> const bcrypt = require('bcryptjs')
+ const hashPassword = async () =&gt; {
+     const password = "Mypassword"
+     
+ 	// bcrypt.hash(password, no of rounds to hash)
+     const hashedPassword = bcrypt.hash(password, 8)
+ 	console.log(password)       // "Mypassword"
+ 	console.log(hashPassword)    // "dkkjdsfdhfjkdfhkjhfjkld" 
+ }
+</code></pre>
+</li>
+</ol>
+<ul>
+<li>To compare the passwords, use <strong>bcrypt.compare(inputPassword, password)</strong> -&gt; is a async function and returns true or false</li>
+</ul>
+<h2 id="hash-the-password-before-saving-to-db">Hash the password before saving to db:</h2>
+<ul>
+<li>
+<p>To do so, use middleware on mongoose</p>
+</li>
+<li>
+<p>use method on schema called ‘pre’ to hash the password before saving.</p>
+</li>
+<li>
+<p>Need to use standard function() not a arrow function as binding needs to done on ‘pre’ hook.</p>
+</li>
+<li>
+<p>function is async and takes next to pass the control after the hook is done.</p>
+</li>
+<li>
+<p>create normally uses the ‘pre’ hook before saving, but update("<strong>findByIdAndUpdate"</strong>) <strong>bypasses</strong> the middleware and changes db directly. So special care needs to be taken.</p>
+</li>
+<li>
+<p>so to tackle this, use <strong>findById</strong> and update by looping over req.body.<br>
+1. Find the user by <strong>findById</strong><br>
+2. Alter the fields provided by bracket notation.<br>
+3. await and save the user.</p>
+</li>
+<li>
+<p>Needs to hash the password only if the password is not modified or not hashed.</p>
+</li>
+<li>
+<p>Mongoose has <strong>isModified</strong> method to check if the password is hashed or not.</p>
+</li>
+</ul>
+<h2 id="logging-in-users">Logging in users:</h2>
+<ol>
+<li>Make findByCredentials(req.body.email, req.body.password)</li>
+<li>To setup, use <strong>userSchema.statics.findByCredentials</strong></li>
+<li>use <strong>bcrypt.compare(inputPassword, originalPassword)</strong></li>
+</ol>
+<h2 id="jwt">JWT:</h2>
+<ol>
+<li><strong>npm install jsonwebtoken</strong></li>
+<li>To create jwt token, use  <strong>jwt.sign()</strong></li>
+<li>JWT is separated by 2 periods,</li>
+<li>1st part -&gt; Base 64 encoded Header</li>
+<li>2nd Part -&gt; payload or body</li>
+<li>3rd Part -&gt; signature</li>
+<li>use <a href="http://base64decode.org">base64decode.org</a></li>
+<li>To verify, <strong>jwt.sign(token, secret)</strong></li>
+</ol>
+<h2 id="checklist">Checklist:</h2>
+<ol>
+<li>
+<p>Make a pre save middleware on userSchema.</p>
+</li>
+<li>
+<p>Hash the password if the <strong>user.isModified(“password”)</strong> // serving for both creating new user and changing password on update profile.</p>
+</li>
+<li>
+<p>Alter the password , " this.password = await bcrypt.hash(this.password, Rounds) "</p>
+</li>
+<li>
+<p>next()</p>
+<p><strong>Login:</strong></p>
+<ol>
+<li>Create login route</li>
+<li>create <strong>userSchema.statics.(function) on model</strong></li>
+<li>Find user by email.</li>
+<li>Handle errors if user is not found.</li>
+<li>if found, make sure the password is correct by <strong>await bcrypt.compare(inputPassword, user.password)</strong></li>
+<li>Handle error for incorrect password.</li>
+<li>If the password is correct, return user.</li>
+<li>Next step is create jwt token.</li>
+<li>Define the <strong>userSchema.methods.generateJWT()</strong> function that signs and attaches the token to user.</li>
+</ol>
+<p><strong>JWT</strong>:</p>
+<ol start="10">
+<li>To issue jwt, <strong>jwt.sign({ _id:  user._id },  SECRET)</strong></li>
+<li>Make use of node’s &gt; <strong>require(‘crypto’).randomBytes(64).toString(‘hex’)</strong>  to get the access token</li>
+<li>sign the token and attach the token</li>
+<li>save the user.</li>
+<li>return token.</li>
+</ol>
+</li>
+</ol>
+<h2 id="authenticate-tokens-with-middleware">Authenticate tokens with Middleware:</h2>
+<ul>
+<li>
+<p>without middleware: new req -&gt; run route handler</p>
+</li>
+<li>
+<p>with middleware: new req -&gt; do something in middleware -&gt; run route handler</p>
+</li>
+<li>
+<p>Get the <strong>header(‘Authorization’)</strong> and verify with <strong>jwt.verfiy</strong></p>
+</li>
+<li>
+<p>The <strong>jwt.verify</strong> returns the object that has been set on <strong>jwt.sign({ _id:  user._id },  SECRET)</strong></p>
+</li>
+<li>
+<p>Find the user by the object returned from jwt.verify.</p>
+</li>
+<li>
+<p>If no user found, throw error</p>
+</li>
+<li>
+<p>If the user is found,</p>
+<ul>
+<li>Attach user to req</li>
+<li>next()</li>
+</ul>
+</li>
+</ul>
+<h2 id="postman-features">PostMan features:</h2>
+<ul>
+<li>
+<p>Create environment for both dev and prod</p>
+</li>
+<li>
+<p>have url as variable</p>
+</li>
+<li>
+<p>Make a bearer token set to variable eg., {{authToken}}</p>
+</li>
+<li>
+<p>Now on routes, signup and login where the token is issued and are public, set the Tests(on postman)</p>
+<pre><code>  if(pm.response.code  ===  200){
+  		pm.environment.set('authToken', pm.response.json().token)
+  }
+</code></pre>
+</li>
+</ul>
+<p><strong>On signup the response code would be 201. change accordingly.</strong></p>
+<h2 id="logging-out">Logging out:</h2>
+<ul>
+<li>Include auth middleware as user has to be logged in before logging out.</li>
+<li>Clear the token by filter.</li>
+<li>save the <strong>await req.user.save()</strong></li>
+<li>send status</li>
+</ul>
+<p><strong>Logout all</strong>:</p>
+<ul>
+<li>clear all the tokens by emptying <strong>req.user.tokens = []</strong></li>
+<li>save the user to db</li>
+<li>res.send()</li>
+</ul>
+<h2 id="hiding-private-info-on-sending-response-back">Hiding private info on sending response back:</h2>
+<ul>
+<li>when the response is sent by res.send(user), the user object is calling JSON.stringify(user) and sends the JSON object of user</li>
+<li>Making use of this, when we attach the method <strong>toJSON</strong>, the method <strong>toJSON</strong> first gets called and the return value of this method is stringified and sent back.</li>
+<li>So on method, toJSON, remove all the unnecessary properties to send.</li>
+</ul>
+<h2 id="setting-relationship-between-two-models">Setting relationship between two models:</h2>
+<ul>
+<li>
+<p>create a separate field with type of <strong>mongoose.Schema.Types.ObjectId</strong> and make it required</p>
+<pre><code>  owner: {		   
+  	    type: mongoose.Schema.Types.ObjectId,
+  	    required: true,
+  	    ref: 'MODELNAME'
+  }
+</code></pre>
+</li>
+</ul>
+<p>on other model, setup a virtual connection,</p>
+<pre><code>userSchema.virtual({
+	  ref: "Task',
+	  localField: '_id',
+	  foreignField: 'owner'
+})
+</code></pre>
+<ul>
+<li>
+<p>To populate the field,</p>
+<pre><code> const task = await Task.findById('6734918432adsjh23498')
+ await task.populate('owner').execPopulate()
+ console.log(task)
+</code></pre>
+</li>
+</ul>
+<p><strong>Cascade delete:</strong></p>
+<ul>
+<li>when the user deletes his profile, his tasks should also get deleted.</li>
+<li>To do this, create a middleware on userSchema to delete all his tasks.</li>
+<li>There is ‘pre’ remove hook.</li>
 </ul>
 
